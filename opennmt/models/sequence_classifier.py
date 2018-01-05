@@ -103,7 +103,9 @@ class SequenceClassifier(Model):
       classes_prob = tf.nn.softmax(logits)
       classes_id = tf.argmax(classes_prob, axis=1)
       predictions = {
-          "classes": labels_vocab_rev.lookup(classes_id)
+          "classes": labels_vocab_rev.lookup(classes_id),
+          "probability": classes_prob,
+          "class_index": classes_id,
       }
     else:
       predictions = None
@@ -123,4 +125,10 @@ class SequenceClassifier(Model):
     }
 
   def print_prediction(self, prediction, params=None, stream=None):
-    print_bytes(prediction["classes"], stream=stream)
+    # print_bytes(prediction["classes"], stream=stream)
+
+    label = prediction["classes"].decode(stream.encoding)
+    class_index = prediction["class_index"]
+    probability = '%.4f' % prediction["probability"][class_index]
+    text = f'{label}, {probability}'
+    print(text, file=stream)

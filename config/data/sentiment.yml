@@ -1,5 +1,5 @@
 # The directory where models and summaries will be saved. It is created if it does not exist.
-model_dir: sentiment_seq_2
+model_dir: sentiment_seq
 
 data:
   train_features_file:
@@ -13,4 +13,4 @@ data:
   source_vocabulary_1: data/sentiment/src-vocab-1.txt
   source_vocabulary_2: data/sentiment/src-vocab-2.txt
   target_vocabulary: data/sentiment/tgt-vocab.txt
-  words_embedding:  /home/as_admin/vectors/glove.6B.300d.txt
+  words_embedding:  /Users/mwaka/vectors/glove.6B.300d.txt

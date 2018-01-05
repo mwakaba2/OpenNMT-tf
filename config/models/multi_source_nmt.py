@@ -7,17 +7,16 @@ import tensorflow as tf
 import opennmt as onmt
 
 def model():
-  return onmt.models.SequenceToSequence(
-      source_inputter=onmt.inputters.ParallelInputter([
+    return onmt.models.SequenceClassifier(
+      inputter=onmt.inputters.ParallelInputter([
           onmt.inputters.WordEmbedder(
               vocabulary_file_key="source_vocabulary_1",
-              embedding_size=512),
+              embedding_size=None,
+              embedding_file_key="words_embedding",
+              trainable=True),
           onmt.inputters.WordEmbedder(
               vocabulary_file_key="source_vocabulary_2",
               embedding_size=512)]),
-      target_inputter=onmt.inputters.WordEmbedder(
-          vocabulary_file_key="target_vocabulary",
-          embedding_size=512),
       encoder=onmt.encoders.ParallelEncoder([
           onmt.encoders.BidirectionalRNNEncoder(
               num_layers=2,
@@ -34,11 +33,4 @@ def model():
               dropout=0.3,
               residual_connections=False)],
           outputs_reducer=onmt.utils.ConcatReducer(axis=1)),
-      decoder=onmt.decoders.AttentionalRNNDecoder(
-          num_layers=4,
-          num_units=512,
-          bridge=onmt.utils.DenseBridge(),
-          attention_mechanism_class=tf.contrib.seq2seq.LuongAttention,
-          cell_class=tf.contrib.rnn.LSTMCell,
-          dropout=0.3,
-          residual_connections=False))
+      labels_vocabulary_file_key="target_vocabulary")
