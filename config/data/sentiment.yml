@@ -1,0 +1,16 @@
+# The directory where models and summaries will be saved. It is created if it does not exist.
+model_dir: sentiment_seq_2
+
+data:
+  train_features_file:
+    - data/sentiment/src-train-1.txt
+    - data/sentiment/src-train-2.txt
+  train_labels_file: data/sentiment/tgt-train.txt
+  eval_features_file:
+    - data/sentiment/src-val-1.txt
+    - data/sentiment/src-val-2.txt
+  eval_labels_file: data/sentiment/tgt-val.txt
+  source_vocabulary_1: data/sentiment/src-vocab-1.txt
+  source_vocabulary_2: data/sentiment/src-vocab-2.txt
+  target_vocabulary: data/sentiment/tgt-vocab.txt
+  words_embedding:  /home/as_admin/vectors/glove.6B.300d.txt

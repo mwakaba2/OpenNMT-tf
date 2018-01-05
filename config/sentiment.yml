@@ -1,0 +1,23 @@
+params:
+  optimizer: AdamOptimizer
+  learning_rate: 0.001
+  clip_gradients: 5.0
+  decay_type: exponential_decay
+  decay_rate: 0.7
+  decay_steps: 100000
+  start_decay_steps: 500000
+
+train:
+  keep_checkpoint_max: 20
+  save_eval_predictions: true
+  eval_delay: 3600 # Every 1 hour
+  batch_size: 64
+  save_checkpoints_steps: 5000
+  save_summary_steps: 50
+  train_steps: 500000
+  maximum_features_length: 100
+  maximum_labels_length: 50
+
+infer:
+  batch_size: 32
+  n_best: 1
