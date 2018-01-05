@@ -4,6 +4,7 @@ import subprocess
 
 import abc
 import re
+import os
 import six
 
 import tensorflow as tf
@@ -61,14 +62,18 @@ class ExternalEvaluator(object):
 class BLEUEvaluator(ExternalEvaluator):
   """Evaluator calling multi-bleu.perl."""
 
+  def _get_bleu_script(self):
+    return "multi-bleu.perl"
+
   def name(self):
     return "BLEU"
 
   def score(self, labels_file, predictions_path):
+    bleu_script = self._get_bleu_script()
     try:
       with open(predictions_path, "r") as predictions_file:
         bleu_out = subprocess.check_output(
-            ["third_party/multi-bleu.perl", labels_file],
+            [os.path.join("third_party", bleu_script), labels_file],
             stdin=predictions_file,
             stderr=subprocess.STDOUT)
         bleu_out = bleu_out.decode("utf-8")
@@ -78,8 +83,18 @@ class BLEUEvaluator(ExternalEvaluator):
       if error.output is not None:
         msg = error.output.strip()
         tf.logging.warning(
-            "multi-bleu.perl script returned non-zero exit code: {}".format(msg))
+            "{} script returned non-zero exit code: {}".format(bleu_script, msg))
       return None
+
+
+class BLEUDetokEvaluator(BLEUEvaluator):
+  """Evaluator calling multi-bleu-detok.perl."""
+
+  def _get_bleu_script(self):
+    return "multi-bleu-detok.perl"
+
+  def name(self):
+    return "BLEU-detok"
 
 
 def external_evaluation_fn(evaluators_name, labels_file, output_dir=None):
@@ -110,6 +125,8 @@ def external_evaluation_fn(evaluators_name, labels_file, output_dir=None):
     name = name.lower()
     if name == "bleu":
       evaluator = BLEUEvaluator(labels_file=labels_file, output_dir=output_dir)
+    elif name == "bleu-detok":
+      evaluator = BLEUDetokEvaluator(labels_file=labels_file, output_dir=output_dir)
     else:
       raise ValueError("No evaluator associated with the name: {}".format(name))
     evaluators.append(evaluator)
